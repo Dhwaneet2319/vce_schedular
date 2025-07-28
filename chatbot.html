@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCE AI Chatbot - Powered by Multiple AI Models</title>
+
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+    <!-- Styles -->
+    <style>
+        :root {
+            /* Colors */
+            --color-primary: #4f46e5;
+            --color-secondary: #7c3aed;
+            --color-accent: #06b6d4;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+
+            /* Backgrounds */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-quaternary: #e2e8f0;
+
+            /* Text */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+
+            /* Borders */
+            --border-primary: #e2e8f0;
+            --border-secondary: #cbd5e1;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-12: 3rem;
+
+            /* Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-full: 9999px;
+
+            /* Animations */
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+            /* Z-index */
+            --z-sidebar: 10;
+            --z-header: 20;
+            --z-dropdown: 30;
+            --z-modal: 100;
+            --z-tooltip: 200;
+        }
+
+        /* Dark theme */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-quaternary: #475569;
+
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+
+            --border-primary: #334155;
+            --border-secondary: #475569;
+        }
+
+        [data-theme="dark"] .chatbot-header {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            border-bottom-color: var(--border-secondary);
+        }
+
+        [data-theme="dark"] .logo-icon {
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.4);
+        }
+
+        [data-theme="dark"] .header-btn:hover {
+            background: var(--bg-tertiary);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow: hidden;
+        }
+
+        /* Layout */
+        .chatbot-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            border-bottom: 1px solid var(--border-primary);
+            padding: var(--space-2) var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(10px);
+            z-index: var(--z-header);
+            min-height: 60px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--color-primary);
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        }
+
+        .model-selector {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            background: var(--bg-secondary);
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            position: relative;
+            min-width: 140px;
+        }
+
+        .model-selector:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.15);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--color-primary);
+            transform: scale(1.05);
+        }
+
+        /* Chat Area */
+        .chat-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: var(--space-6);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            margin-bottom: var(--space-6);
+            display: flex;
+            gap: var(--space-3);
+            animation: messageSlideIn 0.5s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .message.assistant .message-avatar {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-primary);
+        }
+
+        .message-content {
+            flex: 1;
+            max-width: 80%;
+        }
+
+        .message.user .message-content {
+            background: var(--color-primary);
+            color: white;
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            border-bottom-right-radius: var(--radius-sm);
+        }
+
+        .message.assistant .message-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            padding: var(--space-4);
+            border-radius: var(--radius-lg);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .message-text {
+            word-wrap: break-word;
+        }
+
+        .message-text pre {
+            background: var(--bg-tertiary);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin: var(--space-2) 0;
+        }
+
+        .message-text code {
+            background: var(--bg-tertiary);
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
+        }
+
+        .message-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-3);
+            margin-top: var(--space-3);
+        }
+
+        .generated-image {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease;
+        }
+
+        .generated-image:hover {
+            transform: scale(1.02);
+        }
+
+        .generated-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-top: var(--space-2);
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-6);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: var(--space-1);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typingBounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Input Area */
+        .chat-input-area {
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-primary);
+            padding: var(--space-4) var(--space-6);
+        }
+
+        .input-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: var(--space-3);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-3);
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .message-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            min-height: 24px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .message-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .input-btn {
+            background: none;
+            border: none;
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .input-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--color-primary);
+        }
+
+        .input-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .send-btn {
+            background: var(--color-primary);
+            color: white;
+            padding: var(--space-3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: var(--color-secondary);
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background: var(--text-tertiary);
+        }
+
+        /* Model Dropdown */
+        .model-dropdown {
+            position: absolute;
+            top: calc(100% + var(--space-2));
+            left: 0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            min-width: 250px;
+            max-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: var(--z-dropdown);
+            scrollbar-width: thin;
+            scrollbar-color: var(--text-tertiary) transparent;
+        }
+
+        /* Custom scrollbar for webkit browsers */
+        .model-dropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .model-dropdown::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .model-dropdown::-webkit-scrollbar-thumb {
+            background: var(--text-tertiary);
+            border-radius: 3px;
+        }
+
+        .model-dropdown::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .model-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Enhanced Dark Mode Styling for Dropdown */
+        [data-theme="dark"] .model-dropdown {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .dropdown-section {
+            border-bottom-color: var(--border-secondary);
+        }
+
+        [data-theme="dark"] .section-title {
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        [data-theme="dark"] .model-option {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid transparent;
+        }
+
+        [data-theme="dark"] .model-option:hover {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-secondary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .model-option.selected {
+            background: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            color: white;
+        }
+
+        [data-theme="dark"] .model-name {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .model-description {
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+
+        [data-theme="dark"] .model-badge {
+            background: var(--bg-quaternary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-secondary);
+        }
+
+        [data-theme="dark"] .model-option.selected .model-badge {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        [data-theme="dark"] .model-selector {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-secondary);
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .model-selector:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .dropdown-section {
+            padding: var(--space-3);
+        }
+
+        .dropdown-section:not(:last-child) {
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-2);
+        }
+
+        .model-option {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-3);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            background: none;
+            width: 100%;
+            text-align: left;
+            position: relative;
+        }
+
+        .model-option:hover {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .model-option.selected {
+            background: var(--color-primary);
+            color: white;
+            border: 1px solid var(--color-primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .model-info {
+            flex: 1;
+        }
+
+        .model-name {
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+            font-size: 0.875rem;
+        }
+
+        .model-description {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            line-height: 1.3;
+        }
+
+        .model-badge {
+            font-size: 0.625rem;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            font-weight: 500;
+            border: 1px solid var(--border-primary);
+        }
+
+        .model-option.selected .model-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* Feature Toggles */
+        .feature-toggles {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-3);
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--color-primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .toggle-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* Coming Soon Styles */
+        .coming-soon {
+            position: relative;
+        }
+
+        .coming-soon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(45deg,
+                    transparent,
+                    transparent 5px,
+                    rgba(0, 0, 0, 0.1) 5px,
+                    rgba(0, 0, 0, 0.1) 10px);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .coming-soon-section {
+            position: relative;
+        }
+
+        .coming-soon-section .section-title {
+            color: var(--text-tertiary);
+            font-style: italic;
+        }
+
+        .coming-soon-badge {
+            background: linear-gradient(135deg, #9ca3af, #6b7280) !important;
+            color: white !important;
+            font-size: 0.5rem !important;
+            animation: pulse 2s infinite;
+        }
+
+        .toggle-switch.coming-soon {
+            background: var(--bg-quaternary) !important;
+            cursor: not-allowed !important;
+            opacity: 0.6;
+        }
+
+        .toggle-switch.coming-soon::after {
+            background: var(--text-tertiary) !important;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        /* Hover tooltips for coming soon */
+        .coming-soon:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            z-index: 1000;
+            margin-bottom: 4px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            padding: var(--space-8);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-6);
+            color: white;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .empty-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-6);
+            max-width: 500px;
+        }
+
+        .example-prompts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .example-prompt {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .example-prompt:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .prompt-title {
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .prompt-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chatbot-header {
+                padding: var(--space-2) var(--space-3);
+            }
+
+            .header-left {
+                gap: var(--space-2);
+            }
+
+            .logo {
+                font-size: 0.875rem;
+            }
+
+            .logo-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .model-selector {
+                min-width: 120px;
+                font-size: 0.75rem;
+                padding: var(--space-1) var(--space-2);
+            }
+
+            .header-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            .chat-messages {
+                padding: var(--space-4);
+            }
+
+            .message-content {
+                max-width: 90%;
+            }
+
+            .chat-input-area {
+                padding: var(--space-3) var(--space-4);
+            }
+
+            .example-prompts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading states */
+        .loading-shimmer {
+            background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-tertiary) 50%, var(--bg-secondary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chatbot-container">
+        <!-- Header -->
+        <header class="chatbot-header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i data-lucide="brain-circuit" width="20" height="20"></i>
+                    </div>
+                    VCE AI Chatbot
+                </div>
+
+                <div class="model-selector" id="model-selector">
+                    <i data-lucide="cpu" width="16" height="16"></i>
+                    <span id="selected-model-name">Llama-3</span>
+                    <i data-lucide="chevron-down" width="16" height="16"></i>
+
+                    <div class="model-dropdown" id="model-dropdown">
+                        <!-- Models will be populated dynamically by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="header-btn" id="clear-chat" title="Clear chat">
+                    <i data-lucide="trash-2" width="18" height="18"></i>
+                </button>
+                <button class="header-btn" id="theme-toggle" title="Toggle theme">
+                    <i data-lucide="moon" width="18" height="18"></i>
+                </button>
+                <button class="header-btn" id="back-to-planner" title="Back to Study Planner">
+                    <i data-lucide="arrow-left" width="18" height="18"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <div class="chat-messages" id="chat-messages">
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">
+                        <i data-lucide="message-circle" width="40" height="40"></i>
+                    </div>
+                    <h2 class="empty-title">Welcome to VCE AI Chatbot</h2>
+                    <p class="empty-description">
+                        Chat with multiple AI models including GPT-4, Claude, and Llama. Generate text, ask questions,
+                        and create images for your VCE studies.
+                    </p>
+
+                    <div class="example-prompts">
+                        <div class="example-prompt"
+                            data-prompt="Explain photosynthesis in simple terms for VCE Biology">
+                            <div class="prompt-title">🌱 Biology Help</div>
+                            <div class="prompt-text">Explain photosynthesis in simple terms for VCE Biology</div>
+                        </div>
+                        <div class="example-prompt"
+                            data-prompt="Create a mind map for quadratic equations in VCE Math Methods">
+                            <div class="prompt-title">📊 Math Methods</div>
+                            <div class="prompt-text">Create a mind map for quadratic equations in VCE Math Methods</div>
+                        </div>
+                        <div class="example-prompt"
+                            data-prompt="Generate an image of the water cycle for my Geography presentation">
+                            <div class="prompt-title">🎨 Visual Learning</div>
+                            <div class="prompt-text">Generate an image of the water cycle for my Geography presentation
+                            </div>
+                        </div>
+                        <div class="example-prompt"
+                            data-prompt="Help me write an essay introduction about climate change for VCE English">
+                            <div class="prompt-title">✍️ English Writing</div>
+                            <div class="prompt-text">Help me write an essay introduction about climate change for VCE
+                                English</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <div class="input-container">
+                <div class="feature-toggles">
+                    <div class="toggle-group">
+                        <div class="toggle-switch" id="image-toggle">
+                        </div>
+                        <label class="toggle-label">Generate Images (Premium)</label>
+                    </div>
+                </div>
+
+                <div class="input-wrapper">
+                    <textarea id="message-input" class="message-input"
+                        placeholder="Type your message... (Shift+Enter for new line)" rows="1"></textarea>
+
+                    <div class="input-actions">
+                        <button class="input-btn" id="attach-btn" title="Attach file">
+                            <i data-lucide="paperclip" width="18" height="18"></i>
+                        </button>
+                        <button class="send-btn" id="send-btn" title="Send message">
+                            <i data-lucide="send" width="18" height="18"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="chatbot.js"></script>
+</body>
+
+</html>

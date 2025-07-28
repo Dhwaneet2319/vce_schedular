@@ -1,0 +1,125 @@
+/* Modern Floating Navbar Styles */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(var(--border-rgb), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    z-index: var(--z-header);
+    transition: all 0.3s ease;
+}
+
+.dark-mode .app-header {
+    background: rgba(25, 25, 35, 0.85);
+}
+
+.floating-header {
+    margin: 1rem 1.5rem 0;
+    width: calc(100% - 3rem);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    height: 60px;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+}
+
+.main-nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+    color: var(--color-primary);
+}
+
+.nav-item.active {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: white;
+}
+
+.nav-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.action-button {
+    background: var(--bg-secondary);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.action-button:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-2px);
+}
+
+.action-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.header-controls {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .floating-header {
+        margin: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+    
+    .nav-item span {
+        display: none;
+    }
+    
+    .nav-item {
+        padding: 0.5rem;
+    }
+    
+    .brand-subtitle {
+        display: none;
+    }
+}
+
+/* Adjust main content to account for floating header */
+.main-content {
+    padding-top: 80px;
+}

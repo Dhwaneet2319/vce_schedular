@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCE AI Study Planner</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+
+<body>
+    <!-- Professional Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="loading-animation">
+            <div class="loading-logo">
+                <div class="logo-ring"></div>
+                <div class="logo-center">
+                    <i data-lucide="book-open" class="logo-icon"></i>
+                </div>
+            </div>
+
+            <div class="loading-text">
+                <h1 class="loading-title">VCE AI Study Planner</h1>
+                <p class="loading-subtitle">Initializing your learning environment...</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app-container">
+        <!-- Modern Header -->
+        <header class="app-header" data-aos="fade-down">
+            <div class="header-content">
+                <div class="brand-section">
+                    <div class="brand-icon">
+                        <i data-lucide="graduation-cap" class="brand-logo"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">VCE AI Study Planner</h1>
+                        <p class="brand-subtitle">Intelligent study planning powered by AI</p>
+                    </div>
+                </div>
+
+                <div class="header-controls">
+                    <!-- Theme toggle moved to profile settings dropdown -->
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <main class="main-content">
+            <!-- Input Panel -->
+            <section class="input-panel" data-aos="fade-right" data-aos-delay="100">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <i data-lucide="settings" class="panel-icon"></i>
+                        Study Plan Configuration
+                    </h2>
+                    <p class="panel-description">Configure your personalized study experience</p>
+                </div>
+
+                <div class="form-container">
+                    <div class="input-group" data-aos="fade-up" data-aos-delay="200">
+                        <label class="input-label">
+                            <i data-lucide="book-open" class="label-icon"></i>
+                            Your Subjects
+                        </label>
+                        <input type="text" id="subjects" class="modern-input"
+                            placeholder="e.g., Chemistry, English, Mathematical Methods" autocomplete="off">
+                        <div class="input-hint">Enter your VCE subjects separated by commas</div>
+                    </div>
+
+                    <div class="input-group" data-aos="fade-up" data-aos-delay="300">
+                        <label class="input-label">
+                            <i data-lucide="calendar" class="label-icon"></i>
+                            Study Duration
+                        </label>
+                        <div class="number-input-container">
+                            <input type="number" id="days" class="modern-input number-input" min="1" max="30" value="5">
+                            <div class="input-suffix">days</div>
+                        </div>
+                        <div class="input-hint">Choose between 1-30 days for your study plan</div>
+                    </div>
+
+                    <div class="input-group" data-aos="fade-up" data-aos-delay="400">
+                        <label class="input-label">
+                            <i data-lucide="image" class="label-icon"></i>
+                            Output Format
+                        </label>
+                        <div class="toggle-card">
+                            <div class="toggle-options">
+                                <div class="toggle-option">
+                                    <i data-lucide="file-text" class="option-icon"></i>
+                                    <span>Text Plan</span>
+                                </div>
+                                <label class="professional-toggle">
+                                    <input type="checkbox" id="image-toggle">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <div class="toggle-option">
+                                    <i data-lucide="palette" class="option-icon"></i>
+                                    <span>Visual Materials</span>
+                                </div>
+                            </div>
+                            <div class="toggle-info">
+                                <div class="info-card">
+                                    <i data-lucide="info" class="info-icon"></i>
+                                    <span>Visual materials include diagrams, mind maps, and study aids</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group" data-aos="fade-up" data-aos-delay="500">
+                        <label class="input-label">
+                            <i data-lucide="target" class="label-icon"></i>
+                            Focus Areas
+                        </label>
+                        <textarea id="weak-areas" class="modern-textarea"
+                            placeholder="Describe topics you find challenging or want to focus on..."
+                            rows="4"></textarea>
+                        <div class="input-hint">Optional: Specify areas that need extra attention</div>
+                    </div>
+
+                    <div class="action-section" data-aos="fade-up" data-aos-delay="600">
+                        <button id="generate-btn" class="primary-button">
+                            <i data-lucide="sparkles" class="button-icon"></i>
+                            <span class="button-text">Generate Study Plan</span>
+                            <div class="button-ripple"></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Processing Panel -->
+            <section id="ai-processing" class="processing-panel hidden" data-aos="fade-left" data-aos-delay="100">
+                <div class="processing-content">
+                    <div class="ai-avatar">
+                        <div class="avatar-ring"></div>
+                        <div class="avatar-core">
+                            <i data-lucide="brain" class="ai-icon"></i>
+                        </div>
+                        <div class="ai-pulse"></div>
+                    </div>
+
+                    <div class="processing-text">
+                        <h3 class="processing-title">AI is analyzing your requirements</h3>
+                        <p class="processing-subtitle" id="processing-status">Initializing neural networks...</p>
+                    </div>
+
+                    <div class="processing-steps">
+                        <div class="step-item active" id="step-1">
+                            <div class="step-indicator"></div>
+                            <span>Analyzing subjects</span>
+                        </div>
+                        <div class="step-item" id="step-2">
+                            <div class="step-indicator"></div>
+                            <span>Optimizing schedule</span>
+                        </div>
+                        <div class="step-item" id="step-3">
+                            <div class="step-indicator"></div>
+                            <span>Generating content</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Results Panel -->
+            <section id="results-panel" class="results-panel hidden" data-aos="fade-up" data-aos-delay="200">
+                <div class="results-header">
+                    <div class="results-title-section">
+                        <h2 class="results-title">
+                            <i data-lucide="check-circle" class="title-icon"></i>
+                            Your Personalized Study Plan
+                        </h2>
+                        <p class="results-subtitle">AI-generated plan tailored to your needs</p>
+                    </div>
+
+                    <div class="results-actions">
+                        <button class="action-btn secondary" id="regenerate-btn">
+                            <i data-lucide="refresh-cw" class="btn-icon"></i>
+                            Regenerate
+                        </button>
+                        <button class="action-btn primary" id="export-btn">
+                            <i data-lucide="download" class="btn-icon"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="results-content">
+                    <div class="plan-container" id="plan-content">
+                        <!-- Generated content will appear here -->
+                    </div>
+
+                    <div class="visual-content hidden" id="visual-content">
+                        <div class="visual-gallery" id="visual-gallery">
+                            <!-- Visual materials will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="results-footer">
+                    <div class="generation-info">
+                        <i data-lucide="clock" class="info-icon"></i>
+                        <span id="generation-time">Generated in 3.2 seconds</span>
+                    </div>
+                    <div class="ai-confidence">
+                        <i data-lucide="trending-up" class="info-icon"></i>
+                        <span>AI Confidence: <strong id="confidence-score">96%</strong></span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Clean Compact Footer -->
+        <footer class="app-footer" data-aos="fade-up" data-aos-delay="300">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i data-lucide="graduation-cap" class="logo-icon"></i>
+                    </div>
+                    <div class="footer-text">
+                        <h3 class="footer-title">VCE AI Study Planner</h3>
+                        <p class="footer-tagline">Intelligent study planning powered by advanced AI technology</p>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <a href="chatbot.html" class="footer-link">
+                        <i data-lucide="message-circle" class="footer-link-icon"></i>
+                        AI Chatbot
+                    </a>
+                    <a href="#privacy" class="footer-link">Privacy Policy</a>
+                    <a href="#terms" class="footer-link">Terms of Service</a>
+                    <a href="#contact" class="footer-link">Contact</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 VCE AI Study Planner. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 100
+        });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
